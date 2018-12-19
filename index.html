@@ -2,97 +2,76 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>JS + CSS Clock</title>
+  <title>Scoped CSS Variables and JS</title>
 </head>
 <body>
+  <h2>CSS Variables and <span class='highlight'>JS</span></h2>
 
+  <div class="controls">
+    <label for="spacing">Spacing:</label>
+    <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
 
-    <div class="clock">
-      <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
-      </div>
-    </div>
+    <label for="blur">Blur:</label>
+    <input id="blur" type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
 
+    <label for="base">Base Color</label>
+    <input id="base" type="color" name="base" value="#fbfc8c">
+  </div>
+
+  <img src="https://ichef.bbci.co.uk/news/660/cpsprodpb/FDD6/production/_100728946_catrelax.jpg">
 
   <style>
-    html {
-      background: #018DED url(https://images.unsplash.com/photo-1519885277449-12eee5564d68?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80);
-      background-size: cover;
-      font-family: 'helvetica neue';
-      text-align: center;
-      font-size: 10px;
+    :root {
+      --base: #fbfc8c;
+      --spacing: 10px;
+      --blur: 10px;
     }
+
+    img {
+      padding: var(--spacing);
+      background: var(--base);
+      filter: blur(var(--blur));
+    }
+
+    .highlight {
+      color: var(--base);
+    }
+
+    /*
+      misc styles, nothing to do with CSS variables
+    */
 
     body {
-      margin: 0;
-      font-size: 2rem;
-      display: flex;
-      flex: 1;
-      min-height: 100vh;
-      align-items: center;
+      text-align: center;
+      background: #193549;
+      color: white;
+      font-family: 'helvetica neue', sans-serif;
+      font-weight: 100;
+      font-size: 50px;
     }
 
-    .clock {
-      width: 30rem;
-      height: 30rem;
-      border: 20px solid #ffffff63;
-      border-radius: 50%;
-      margin: 50px auto;
-      position: relative;
-      padding: 2rem;
-      box-shadow:
-        0 0 0 4px rgba(0,0,0,0.1),
-        inset 0 0 0 3px #EFEFEF,
-        inset 0 0 10px black,
-        0 0 10px rgba(0,0,0,0.2);
+    .controls {
+      margin-bottom: 50px;
     }
 
-    .clock-face {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform: translateY(-3px); /* account for the height of the clock hands */
+    input {
+      width: 100px;
     }
-
-    .hand {
-      width: 50%;
-      height: 6px;
-      background: #68a8c79c;
-      position: absolute;
-      top: 50%;
-      transform-origin: 100%;
-      transform: rotate(90deg);
-      transition: all 0.05s;
-      transition-timing-function: cubic-bezier(0.28, -0.14, 0.76, 3.96);
-    }
-
   </style>
 
   <script>
-    const secondHand = document.querySelector('.second-hand');
-    const minHand = document.querySelector('.min-hand');
-    const hourHand = document.querySelector('.hour-hand');
-
-    function setDate() {
-      const now = new Date();
-      // seconds hand
-      const seconds = now.getSeconds();
-      const secondDegrees = ((seconds/60) * 360) + 90;
-      secondHand.style.transform = `rotate(${secondDegrees}deg)`;
-      // minutes hand
-      const min = now.getMinutes();
-      const minDegrees = ((min/60) * 360) + 90;
-      minHand.style.transform = `rotate(${minDegrees}deg)`;
-      // hour hand
-      const hour = now.getHours();
-      const hourDegrees = ((hour/60) * 360) + 245;
-      hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+    // selects all inputs on the page (makes a node list of inputs)
+    const inputs = document.querySelectorAll('.controls input');
+    // 
+    function handleUpdate() {
+      const suffix = this.dataset.sizing || '';
+      document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix);
     }
-    setInterval(setDate, 1000);
-
+    // listen for a change event for each of the inputs and call functionn
+    inputs.forEach(input => input.addEventListener('change', handleUpdate));
+    inputs.forEach(input => input.addEventListener('mousemove', handleUpdate));
 
   </script>
+
 </body>
 </html>
